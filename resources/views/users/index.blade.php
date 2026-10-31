@@ -13,12 +13,14 @@
                 </select>
                 <button type="submit" class="btn-primary btn-sm">Filter</button>
             </form>
+            @can('hrd')
             <a href="{{ route('users.create') }}" class="btn-primary btn-sm">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
                 Tambah Karyawan
             </a>
+            @endcan
         </div>
 
         @if (session('success'))
@@ -39,12 +41,14 @@
                     </div>
                     <p class="empty-state-title">Belum Ada Karyawan</p>
                     <p class="empty-state-description">Tambahkan karyawan baru untuk mulai mengelola data.</p>
+                    @can('hrd')
                     <a href="{{ route('users.create') }}" class="btn-primary mt-4">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                         Tambah Karyawan
                     </a>
+                    @endcan
                 </div>
             @else
                 <div class="table-wrap">
@@ -77,6 +81,7 @@
                                         <span class="badge {{ $roleBadge }}">{{ $user->role?->display_name ?? '-' }}</span>
                                     </td>
                                     <td>
+                                        @can('hrd')
                                         <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('users.edit', $user) }}" class="btn-ghost btn-sm">
                                                 <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -97,6 +102,7 @@
                                                 </form>
                                             @endif
                                         </div>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach

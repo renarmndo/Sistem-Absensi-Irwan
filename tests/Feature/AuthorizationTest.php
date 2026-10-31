@@ -53,6 +53,18 @@ test('pimpinan cannot access hrd salary routes', function () {
     $response->assertForbidden();
 });
 
+test('pimpinan can view employee list but cannot manage employees', function () {
+    $pimpinan = User::factory()->pimpinan()->create();
+
+    $this->actingAs($pimpinan)
+        ->get(route('users.index'))
+        ->assertOk();
+
+    $this->actingAs($pimpinan)
+        ->get(route('users.create'))
+        ->assertForbidden();
+});
+
 test('hrd gate works for hrd users', function () {
     $hrd = User::factory()->hrd()->create();
 

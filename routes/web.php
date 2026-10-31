@@ -12,6 +12,7 @@ use App\Models\Attendance;
 use App\Models\LeaveRequest;
 use App\Models\OfficeSetting;
 use App\Models\Payroll;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,7 +25,7 @@ Route::get('/dashboard', function () {
     $office = OfficeSetting::first();
 
     if ($user->isHrd()) {
-        $totalKaryawan = \App\Models\User::whereHas('role', fn ($q) => $q->where('name', 'karyawan'))->count();
+        $totalKaryawan = User::whereHas('role', fn ($q) => $q->where('name', 'karyawan'))->count();
 
         $todayAttendances = Attendance::with('user')
             ->whereDate('date', $today)
@@ -95,13 +96,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/{leaveRequest}/tolak', [LeaveRequestController::class, 'reject'])->name('reject');
     });
 
-    Route::prefix('karyawan')->name('users.')->middleware('can:hrd')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/buat', [UserController::class, 'create'])->name('create');
-        Route::post('/', [UserController::class, 'store'])->name('store');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-        Route::put('/{user}', [UserController::class, 'update'])->name('update');
-        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    Route::prefix('karyawan')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->middleware('can:pengelola')->name('index');
+
+        Route::middleware('can:hrd')->group(function () {
+            Route::get('/buat', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('/{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
     });
 
     Route::prefix('gaji')->name('salaries.')->middleware('can:hrd')->group(function () {
